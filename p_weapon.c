@@ -544,10 +544,13 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 
 	timer = ent->client->grenade_time - level.time;
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
+	fire_grenade2 (ent, start, forward, damage, 2000, timer, radius, held);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
+
+	if(ent->client->ammo_index <=0)
+		ent->client->pers.selected_item = ITEM_INDEX("Blaster");
 
 	ent->client->grenade_time = level.time + 1.0;
 
@@ -694,6 +697,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	vec3_t	start;
 	int		damage = 120;
 	float	radius;
+	float	damage_radius = 1000;
 
 	radius = damage+40;
 	if (is_quad)
@@ -706,7 +710,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	fire_bfg (ent, start, forward, damage, 400, damage_radius);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -803,7 +807,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	if (is_quad)
 		damage *= 4;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorSet(offset, 8, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
@@ -813,15 +817,15 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
 
 	// send muzzle flash
-	gi.WriteByte (svc_muzzleflash);
+	/*gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	if (hyper)
 		gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
 	else
 		gi.WriteByte (MZ_BLASTER | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-	PlayerNoise(ent, start, PNOISE_WEAPON);
+*/
+	//PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 
 
@@ -830,19 +834,19 @@ void Weapon_Blaster_Fire (edict_t *ent)
 	int		damage;
 
 	if (deathmatch->value)
-		damage = 15;
-	else
 		damage = 10;
+	else
+		damage = 15;
 	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
 	ent->client->ps.gunframe++;
 }
 
 void Weapon_Blaster (edict_t *ent)
 {
-	static int	pause_frames[]	= {19, 32, 0};
-	static int	fire_frames[]	= {5, 0};
+	static int	pause_frames[]	= {0};
+	static int	fire_frames[]	= {4, 0};
 
-	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	Weapon_Generic (ent, 2, 5, 7, 10, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
 
@@ -1413,3 +1417,61 @@ void Weapon_BFG (edict_t *ent)
 
 
 //======================================================================
+
+//PUNCH weapon
+
+void weapon_punch_fire (edict_t *ent)
+{
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
+
+	if (deathmatch->value)
+	{	// normal damage is too extreme in dm
+		damage = 100;
+		kick = 200;
+	}
+	else
+	{
+		damage = 150;
+		kick = 250;
+	}
+
+	if (is_quad)
+	{
+		damage *= 4;
+		kick *= 4;
+	}
+
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+
+	VectorScale (forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
+
+	VectorSet(offset, 0, 7,  ent->viewheight-8);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_punch (ent, start, forward, damage, kick);
+
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	gi.WriteByte (MZ_RAILGUN | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+}
+
+
+void Weapon_Punch (edict_t *ent)
+{
+	static int	pause_frames[]	= {56, 0};
+	static int	fire_frames[]	= {4, 0};
+
+	Weapon_Generic (ent, 3, 18, 56, 61, pause_frames, fire_frames, weapon_punch_fire);
+}

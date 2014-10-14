@@ -297,7 +297,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			switch (mod)
 			{
 			case MOD_BLASTER:
-				message = "was blasted by";
+				message = "was batted to shit by";
 				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
@@ -335,6 +335,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				break;
 			case MOD_RAILGUN:
 				message = "was railed by";
+				break;
+			case MOD_PUNCH:
+				message = "was punched to shit by";
 				break;
 			case MOD_BFG_LASER:
 				message = "saw the pretty lights from";
@@ -599,6 +602,8 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.health			= 100;
 	client->pers.max_health		= 100;
+	client->pers.stamina		= 100;
+	client->pers.max_stamina	= 100;
 
 	client->pers.max_bullets	= 200;
 	client->pers.max_shells		= 100;
@@ -640,6 +645,12 @@ void SaveClientData (void)
 			continue;
 		game.clients[i].pers.health = ent->health;
 		game.clients[i].pers.max_health = ent->max_health;
+
+		//stamina save
+		game.clients[i].pers.stamina = ent->stamina;
+		game.clients[i].pers.max_stamina = ent->max_stamina;
+		//
+
 		game.clients[i].pers.savedFlags = (ent->flags & (FL_GODMODE|FL_NOTARGET|FL_POWER_ARMOR));
 		if (coop->value)
 			game.clients[i].pers.score = ent->client->resp.score;
@@ -650,6 +661,12 @@ void FetchClientEntData (edict_t *ent)
 {
 	ent->health = ent->client->pers.health;
 	ent->max_health = ent->client->pers.max_health;
+
+	//stamina fetch
+	ent->stamina = ent->client->pers.stamina;
+	ent->max_stamina = ent->client->pers.max_stamina;
+	//
+
 	ent->flags |= ent->client->pers.savedFlags;
 	if (coop->value)
 		ent->client->resp.score = ent->client->pers.score;
@@ -1550,6 +1567,14 @@ void PrintPmove (pmove_t *pm)
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
+void Float_ModVelocity(edict_t *ent, float x, float y, float z)
+{
+	vec3_t tempvec;
+
+	VectorSet(tempvec, x, y, z);
+	VectorAdd(ent->velocity, tempvec, ent->velocity);
+}
+
 /*
 ==============
 ClientThink
@@ -1579,6 +1604,24 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	pm_passent = ent;
+
+	if(ent->groundentity)
+		ent->timestamp = level.time;
+	if(!ent->groundentity && !ent->dbljumped && ucmd->upmove>10)
+	{
+		if(level.time-ent->timestamp>=0.35 && ent->stamina >=15)	//time to double jump
+		{
+			Float_ModVelocity(ent, 0, 0, 1000);
+
+			ent->stamina -=15;
+
+			ent->dbljumped = true;
+			ent->timestamp = 0;
+		}
+	}
+
+	if (ent->groundentity && ent->dbljumped == true)
+		ent->dbljumped = false;
 
 	if (ent->client->chase_target) {
 
@@ -1793,4 +1836,10 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
+
+	ent->stamina+=1;
+	if(ent->stamina >=100)
+	{
+		ent->stamina = 100;
+	}
 }

@@ -16,6 +16,7 @@ void Weapon_Grenade (edict_t *ent);
 void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
+void Weapon_Punch (edict_t *ent);
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -482,7 +483,7 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 
 	if (weapon && !oldcount)
 	{
-		if (other->client->pers.weapon != ent->item && ( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
+		if (other->client->pers.weapon != ent->item && ( !deathmatch->value || other->client->pers.weapon == FindItem("Fists") ) )
 			other->client->newweapon = ent->item;
 	}
 
@@ -1277,7 +1278,7 @@ always owned, never in the world
 		Weapon_Blaster,
 		"misc/w_pkup.wav",
 		NULL, 0,
-		"models/weapons/v_blast/tris.md2",
+		"models/weapons/g_bat/tris.md2",
 /* icon */		"w_blaster",
 /* pickup */	"Blaster",
 		0,
@@ -1287,99 +1288,7 @@ always owned, never in the world
 		WEAP_BLASTER,
 		NULL,
 		0,
-/* precache */ "weapons/blastf1a.wav misc/lasfly.wav"
-	},
-
-/*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_shotgun", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_Shotgun,
-		"misc/w_pkup.wav",
-		"models/weapons/g_shotg/tris.md2", EF_ROTATE,
-		"models/weapons/v_shotg/tris.md2",
-/* icon */		"w_shotgun",
-/* pickup */	"Shotgun",
-		0,
-		1,
-		"Shells",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_SHOTGUN,
-		NULL,
-		0,
-/* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
-	},
-
-/*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_supershotgun", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_SuperShotgun,
-		"misc/w_pkup.wav",
-		"models/weapons/g_shotg2/tris.md2", EF_ROTATE,
-		"models/weapons/v_shotg2/tris.md2",
-/* icon */		"w_sshotgun",
-/* pickup */	"Super Shotgun",
-		0,
-		2,
-		"Shells",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_SUPERSHOTGUN,
-		NULL,
-		0,
-/* precache */ "weapons/sshotf1b.wav"
-	},
-
-/*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_machinegun", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_Machinegun,
-		"misc/w_pkup.wav",
-		"models/weapons/g_machn/tris.md2", EF_ROTATE,
-		"models/weapons/v_machn/tris.md2",
-/* icon */		"w_machinegun",
-/* pickup */	"Machinegun",
-		0,
-		1,
-		"Bullets",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_MACHINEGUN,
-		NULL,
-		0,
-/* precache */ "weapons/machgf1b.wav weapons/machgf2b.wav weapons/machgf3b.wav weapons/machgf4b.wav weapons/machgf5b.wav"
-	},
-
-/*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_chaingun", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_Chaingun,
-		"misc/w_pkup.wav",
-		"models/weapons/g_chain/tris.md2", EF_ROTATE,
-		"models/weapons/v_chain/tris.md2",
-/* icon */		"w_chaingun",
-/* pickup */	"Chaingun",
-		0,
-		1,
-		"Bullets",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_CHAINGUN,
-		NULL,
-		0,
-/* precache */ "weapons/chngnu1a.wav weapons/chngnl1a.wav weapons/machgf3b.wav` weapons/chngnd1a.wav"
+/* precache */
 	},
 
 /*QUAKED ammo_grenades (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -1396,128 +1305,13 @@ always owned, never in the world
 /* icon */		"a_grenades",
 /* pickup */	"Grenades",
 /* width */		3,
-		5,
+		1,
 		"grenades",
 		IT_AMMO|IT_WEAPON,
 		WEAP_GRENADES,
 		NULL,
 		AMMO_GRENADES,
 /* precache */ "weapons/hgrent1a.wav weapons/hgrena1b.wav weapons/hgrenc1b.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav "
-	},
-
-/*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_grenadelauncher",
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_GrenadeLauncher,
-		"misc/w_pkup.wav",
-		"models/weapons/g_launch/tris.md2", EF_ROTATE,
-		"models/weapons/v_launch/tris.md2",
-/* icon */		"w_glauncher",
-/* pickup */	"Grenade Launcher",
-		0,
-		1,
-		"Grenades",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_GRENADELAUNCHER,
-		NULL,
-		0,
-/* precache */ "models/objects/grenade/tris.md2 weapons/grenlf1a.wav weapons/grenlr1b.wav weapons/grenlb1b.wav"
-	},
-
-/*QUAKED weapon_rocketlauncher (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_rocketlauncher",
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_RocketLauncher,
-		"misc/w_pkup.wav",
-		"models/weapons/g_rocket/tris.md2", EF_ROTATE,
-		"models/weapons/v_rocket/tris.md2",
-/* icon */		"w_rlauncher",
-/* pickup */	"Rocket Launcher",
-		0,
-		1,
-		"Rockets",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_ROCKETLAUNCHER,
-		NULL,
-		0,
-/* precache */ "models/objects/rocket/tris.md2 weapons/rockfly.wav weapons/rocklf1a.wav weapons/rocklr1b.wav models/objects/debris2/tris.md2"
-	},
-
-/*QUAKED weapon_hyperblaster (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_hyperblaster", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_HyperBlaster,
-		"misc/w_pkup.wav",
-		"models/weapons/g_hyperb/tris.md2", EF_ROTATE,
-		"models/weapons/v_hyperb/tris.md2",
-/* icon */		"w_hyperblaster",
-/* pickup */	"HyperBlaster",
-		0,
-		1,
-		"Cells",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_HYPERBLASTER,
-		NULL,
-		0,
-/* precache */ "weapons/hyprbu1a.wav weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav"
-	},
-
-/*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_railgun", 
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_Railgun,
-		"misc/w_pkup.wav",
-		"models/weapons/g_rail/tris.md2", EF_ROTATE,
-		"models/weapons/v_rail/tris.md2",
-/* icon */		"w_railgun",
-/* pickup */	"Railgun",
-		0,
-		1,
-		"Slugs",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_RAILGUN,
-		NULL,
-		0,
-/* precache */ "weapons/rg_hum.wav"
-	},
-
-/*QUAKED weapon_bfg (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"weapon_bfg",
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_BFG,
-		"misc/w_pkup.wav",
-		"models/weapons/g_bfg/tris.md2", EF_ROTATE,
-		"models/weapons/v_bfg/tris.md2",
-/* icon */		"w_bfg",
-/* pickup */	"BFG10K",
-		0,
-		50,
-		"Cells",
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_BFG,
-		NULL,
-		0,
-/* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
 	},
 
 	//
@@ -1538,7 +1332,7 @@ always owned, never in the world
 /* icon */		"a_shells",
 /* pickup */	"Shells",
 /* width */		3,
-		10,
+		0,
 		NULL,
 		IT_AMMO,
 		0,
@@ -1561,7 +1355,7 @@ always owned, never in the world
 /* icon */		"a_bullets",
 /* pickup */	"Bullets",
 /* width */		3,
-		50,
+		0,
 		NULL,
 		IT_AMMO,
 		0,
@@ -1584,7 +1378,7 @@ always owned, never in the world
 /* icon */		"a_cells",
 /* pickup */	"Cells",
 /* width */		3,
-		50,
+		0,
 		NULL,
 		IT_AMMO,
 		0,
@@ -1607,7 +1401,7 @@ always owned, never in the world
 /* icon */		"a_rockets",
 /* pickup */	"Rockets",
 /* width */		3,
-		5,
+		0,
 		NULL,
 		IT_AMMO,
 		0,
@@ -1630,7 +1424,7 @@ always owned, never in the world
 /* icon */		"a_slugs",
 /* pickup */	"Slugs",
 /* width */		3,
-		10,
+		0,
 		NULL,
 		IT_AMMO,
 		0,

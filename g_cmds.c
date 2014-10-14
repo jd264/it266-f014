@@ -880,6 +880,68 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+//Dodge Functions
+
+void Cmd_LeftDodge_f (edict_t *ent)
+{
+	vec3_t	start;
+	vec3_t	side;
+	vec3_t	end;
+
+	VectorCopy(ent->s.origin, start);
+	start[2] += ent->viewheight;
+	AngleVectors(ent->client->v_angle, NULL, side, NULL);
+	VectorMA(start, 8192, side, end);
+	
+	if(ent->stamina >= 30)
+	{
+		VectorScale(side, 2500, side);
+		VectorAdd(side, ent->velocity, ent->velocity);
+		ent->stamina -=30;
+	}
+}
+
+void Cmd_RightDodge_f (edict_t *ent)
+{
+	vec3_t	start;
+	vec3_t	side;
+	vec3_t	end;
+
+	VectorCopy(ent->s.origin, start);
+	start[2] += ent->viewheight;
+	AngleVectors(ent->client->v_angle, NULL, side, NULL);
+	VectorMA(start, 8192, side, end);
+	
+	if (ent->stamina >= 30)
+	{
+		VectorScale(side, -2500, side);
+		VectorAdd(side, ent->velocity, ent->velocity);
+		ent->stamina -= 30;
+	}
+}
+
+//
+
+//SprintMod Function
+
+void Cmd_Dash_f (edict_t *ent)
+{
+	vec3_t start;
+	vec3_t forward;
+	vec3_t end;
+
+	VectorCopy(ent->s.origin, start);
+	start[2] += ent->viewheight;
+	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+	VectorMA(start, 8192, forward, end);
+
+	if(ent->stamina >= 20)
+	{
+		VectorScale(forward, 1500, forward);
+		VectorAdd(forward, ent->velocity, ent->velocity);
+		ent->stamina -= 20;
+	}
+}
 
 /*
 =================
@@ -966,8 +1028,21 @@ void ClientCommand (edict_t *ent)
 		Cmd_PutAway_f (ent);
 	else if (Q_stricmp (cmd, "wave") == 0)
 		Cmd_Wave_f (ent);
+	//dash command
+	else if (Q_stricmp (cmd, "sprintmod") == 0)
+		Cmd_Dash_f(ent);
+	//end dash command
+	//dodge command <-
+	else if (Q_stricmp (cmd, "leftdodge") == 0)
+		Cmd_LeftDodge_f(ent);
+	//dodge command ->
+	else if (Q_stricmp (cmd, "rightdodge") == 0)
+		Cmd_RightDodge_f(ent);
+	//end of dodge commands
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
+
+

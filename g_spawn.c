@@ -753,6 +753,13 @@ char *dm_statusbar =
   "string2 \"SPECTATOR MODE\" "
 "endif "
 
+// stamina
+" yb	-24 "
+" xr	-250 "
+" num	3	19 "
+" xr	-200 "
+" pic	18 "
+
 // chase camera
 "if 16 "
   "xv 0 "

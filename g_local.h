@@ -176,7 +176,8 @@ MOVETYPE_STEP,			// gravity, special edge handling
 MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
-MOVETYPE_BOUNCE
+MOVETYPE_BOUNCE,
+MOVETYPE_FLYRICOCHET	//bounce off walls
 } movetype_t;
 
 
@@ -211,6 +212,7 @@ typedef struct
 #define WEAP_HYPERBLASTER		9 
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
+#define WEAP_PUNCH				12
 
 typedef struct gitem_s
 {
@@ -479,6 +481,7 @@ extern	int	body_armor_index;
 #define MOD_TRIGGER_HURT	31
 #define MOD_HIT				32
 #define MOD_TARGET_BLASTER	33
+#define MOD_PUNCH			34
 #define MOD_FRIENDLY_FIRE	0x8000000
 
 extern	int	meansOfDeath;
@@ -823,6 +826,9 @@ typedef struct
 	int			max_health;
 	int			savedFlags;
 
+	int			stamina;	//stamina variable
+	int			max_stamina;	//max stamina variable
+
 	int			selected_item;
 	int			inventory[MAX_ITEMS];
 
@@ -1034,6 +1040,10 @@ struct edict_s
 	float		last_move_time;
 
 	int			health;
+
+	int			stamina;	//variable for stamina
+	int			max_stamina; //max stamina variable
+
 	int			max_health;
 	int			gib_health;
 	int			deadflag;
@@ -1091,5 +1101,7 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	qboolean	dbljumped;		//variable to check if the player is pressing the sprint button
 };
 
