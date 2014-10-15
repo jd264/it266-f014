@@ -843,10 +843,10 @@ void Weapon_Blaster_Fire (edict_t *ent)
 
 void Weapon_Blaster (edict_t *ent)
 {
-	static int	pause_frames[]	= {0};
-	static int	fire_frames[]	= {4, 0};
+	static int	pause_frames[]	= {19, 32, 0};
+	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 2, 5, 7, 10, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	Weapon_Generic (ent, 2, 5, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
 
